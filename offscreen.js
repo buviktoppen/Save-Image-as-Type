@@ -78,16 +78,24 @@ function download(url, filename) {
 
 function convertImageAsType(src, filename, type) {
 	function getDataURLOfType(img, type) {
-		var canvas = document.createElement('canvas');
-		canvas.width = img.width;
-		canvas.height = img.height;
-		var context = canvas.getContext('2d');
-		var mimeType = 'image/'+(type ==  'jpg' ? 'jpeg' : type);
-		context.drawImage(img, 0, 0);
-		var dataurl =  canvas.toDataURL(mimeType);
-		canvas = null;
-		return dataurl;
+	var canvas = document.createElement('canvas');
+	canvas.width = img.width;
+	canvas.height = img.height;
+	var context = canvas.getContext('2d');
+	var mimeType = 'image/' + (type == 'jpg' ? 'jpeg' : type);
+
+	// Set white background if converting to JPG (which doesn't support transparency)
+	if (type === 'jpg') {
+		context.fillStyle = '#FFFFFF';
+		context.fillRect(0, 0, canvas.width, canvas.height);
 	}
+
+	context.drawImage(img, 0, 0);
+	var dataurl = canvas.toDataURL(mimeType);
+	canvas = null;
+	return dataurl;
+}
+
 	function imageLoad(src, type, callback) {
 		var img = new Image();
 		img.onload = function() {
